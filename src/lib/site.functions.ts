@@ -89,10 +89,15 @@ export const togglePlatform = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { assertAdmin, admin } = await import("./site.server");
     assertAdmin(data.code);
-    const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
+    const patch: {
+      updated_at: string;
+      visible?: boolean;
+      maintenance?: boolean;
+    } = { updated_at: new Date().toISOString() };
     if (typeof data.visible === "boolean") patch.visible = data.visible;
     if (typeof data.maintenance === "boolean") patch.maintenance = data.maintenance;
     const { error } = await admin().from("platforms").update(patch).eq("id", data.id);
+
     if (error) throw new Error(error.message);
     return { ok: true as const };
   });
