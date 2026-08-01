@@ -9,6 +9,7 @@ export type Platform = {
   logo_url: string | null;
   position: number;
   visible: boolean;
+  maintenance: boolean;
 };
 
 export type SiteSettings = {
@@ -28,7 +29,7 @@ export type SiteSettings = {
 async function fetchPlatforms(): Promise<Platform[]> {
   const { data, error } = await supabase
     .from("platforms")
-    .select("id,name,url,logo_url,position,visible")
+    .select("id,name,url,logo_url,position,visible,maintenance")
     .order("position", { ascending: true });
   if (error) throw new Error(error.message);
   return (data ?? []) as Platform[];
@@ -48,8 +49,16 @@ async function fetchSettings(): Promise<SiteSettings | null> {
 export function useSiteContent() {
   const queryClient = useQueryClient();
 
-  const platforms = useQuery({ queryKey: ["platforms"], queryFn: fetchPlatforms });
-  const settings = useQuery({ queryKey: ["site_settings"], queryFn: fetchSettings });
+  const platforms = useQuery({
+    queryKey: ["platforms"],
+    queryFn: fetchPlatforms,
+    staleTime: 60_000,
+  });
+  const settings = useQuery({
+    queryKey: ["site_settings"],
+    queryFn: fetchSettings,
+    staleTime: 60_000,
+  });
 
   useEffect(() => {
     const channel = supabase

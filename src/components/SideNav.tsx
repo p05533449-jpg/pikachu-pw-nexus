@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Home, X } from "lucide-react";
+import { Home, Wrench, X } from "lucide-react";
 import { PlatformLogo } from "./PlatformLogo";
 import { Mascot } from "./Mascot";
 import type { Platform, SiteSettings } from "@/hooks/useSiteContent";
@@ -9,12 +9,16 @@ type Props = {
   onClose: () => void;
   platforms: Platform[];
   settings: SiteSettings | null;
+  onMaintenance: (p: Platform) => void;
 };
 
-export function SideNav({ open, onClose, platforms, settings }: Props) {
+export function SideNav({ open, onClose, platforms, settings, onMaintenance }: Props) {
   const brand = settings?.brand_name ?? "PW Nexus";
   const [first, ...restWords] = brand.split(" ");
   const rest = restWords.join(" ");
+
+  const itemClass =
+    "flex items-center gap-3 rounded-2xl px-3 py-2.5 font-display text-[15px] text-muted-foreground transition-colors hover:bg-surface-2 hover:text-foreground";
 
   return (
     <div
@@ -23,12 +27,12 @@ export function SideNav({ open, onClose, platforms, settings }: Props) {
     >
       <div
         onClick={onClose}
-        className={`absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-300 ${
+        className={`absolute inset-0 bg-black/65 transition-opacity duration-300 ${
           open ? "opacity-100" : "opacity-0"
         }`}
       />
       <aside
-        className={`glass-panel absolute inset-y-0 left-0 flex w-[80%] max-w-xs flex-col rounded-r-3xl transition-transform duration-300 ease-out ${
+        className={`absolute inset-y-0 left-0 flex w-[82%] max-w-xs flex-col border-r border-border bg-surface transition-transform duration-300 ease-out will-change-transform ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -39,10 +43,10 @@ export function SideNav({ open, onClose, platforms, settings }: Props) {
             className="flex min-w-0 items-center gap-3"
             aria-label="Admin panel"
           >
-            <div className="h-11 w-11 shrink-0">
-              <Mascot src={settings?.mascot_url ?? null} className="!w-11" />
+            <div className="h-10 w-10 shrink-0">
+              <Mascot src={settings?.mascot_url ?? null} className="!w-10" static />
             </div>
-            <span className="truncate font-display text-xl font-bold">
+            <span className="truncate font-display text-lg font-bold">
               {first}
               <span className="text-primary">{rest ? ` ${rest}` : ""}</span>
             </span>
@@ -51,9 +55,9 @@ export function SideNav({ open, onClose, platforms, settings }: Props) {
             type="button"
             onClick={onClose}
             aria-label="Close menu"
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-surface-2 text-muted-foreground transition-colors hover:text-foreground"
+            className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-surface-2 text-muted-foreground transition-colors hover:text-foreground"
           >
-            <X className="h-5 w-5" />
+            <X className="h-4.5 w-4.5" />
           </button>
         </div>
 
@@ -61,28 +65,48 @@ export function SideNav({ open, onClose, platforms, settings }: Props) {
           <Link
             to="/"
             onClick={onClose}
-            activeProps={{ className: "bg-primary/10 accent-ring text-primary" }}
-            className="flex items-center gap-3 rounded-2xl px-3 py-3 font-display text-base transition-colors hover:bg-surface-2"
+            activeProps={{ className: "!bg-primary/12 !text-primary" }}
+            className={itemClass}
           >
-            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-primary/40 bg-surface-2 text-primary">
-              <Home className="h-5 w-5" />
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-border bg-surface-2 text-primary">
+              <Home className="h-4.5 w-4.5" />
             </span>
             Home
           </Link>
 
-          {platforms.map((p) => (
-            <Link
-              key={p.id}
-              to="/view/$id"
-              params={{ id: p.id }}
-              onClick={onClose}
-              activeProps={{ className: "bg-primary/10 accent-ring text-primary" }}
-              className="flex items-center gap-3 rounded-2xl px-3 py-3 font-display text-base text-muted-foreground transition-colors hover:bg-surface-2 hover:text-foreground"
-            >
-              <PlatformLogo name={p.name} logoUrl={p.logo_url} size="sm" />
-              <span className="truncate">{p.name}</span>
-            </Link>
-          ))}
+          <p className="px-3 pb-1 pt-4 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground/70">
+            Platforms
+          </p>
+
+          {platforms.map((p) =>
+            p.maintenance ? (
+              <button
+                key={p.id}
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onMaintenance(p);
+                }}
+                className={`${itemClass} w-full text-left`}
+              >
+                <PlatformLogo name={p.name} logoUrl={p.logo_url} size="sm" />
+                <span className="truncate">{p.name}</span>
+                <Wrench className="ml-auto h-4 w-4 shrink-0 text-primary/70" />
+              </button>
+            ) : (
+              <Link
+                key={p.id}
+                to="/view/$id"
+                params={{ id: p.id }}
+                onClick={onClose}
+                activeProps={{ className: "!bg-primary/12 !text-primary" }}
+                className={itemClass}
+              >
+                <PlatformLogo name={p.name} logoUrl={p.logo_url} size="sm" />
+                <span className="truncate">{p.name}</span>
+              </Link>
+            ),
+          )}
         </nav>
       </aside>
     </div>

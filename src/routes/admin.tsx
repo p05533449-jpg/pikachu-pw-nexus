@@ -2,7 +2,18 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Eye, EyeOff, GripVertical, Pencil, Plus, Trash2, ArrowLeft } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  GripVertical,
+  Pencil,
+  Plus,
+  Trash2,
+  ArrowLeft,
+  Wrench,
+  Upload,
+} from "lucide-react";
+
 import { useSiteContent, type Platform } from "@/hooks/useSiteContent";
 import { PlatformLogo } from "@/components/PlatformLogo";
 import { fileToCompressedDataUrl } from "@/lib/image";
@@ -182,53 +193,72 @@ function PlatformsTab({ code, platforms }: { code: string; platforms: Platform[]
           onDragStart={() => (dragId.current = p.id)}
           onDragOver={(e) => e.preventDefault()}
           onDrop={() => void onDrop(p.id)}
-          className="glass-panel flex items-center gap-3 rounded-3xl p-3"
+          className="rounded-3xl border border-border bg-surface p-3"
         >
-          <GripVertical className="h-5 w-5 shrink-0 cursor-grab text-muted-foreground" />
-          <PlatformLogo name={p.name} logoUrl={p.logo_url} size="sm" />
-          <div className="min-w-0 flex-1">
-            <p className="truncate font-display text-sm font-bold">{p.name}</p>
-            <p className="truncate text-xs text-muted-foreground">{p.url}</p>
+          <div className="flex items-center gap-3">
+            <GripVertical className="h-5 w-5 shrink-0 cursor-grab text-muted-foreground" />
+            <PlatformLogo name={p.name} logoUrl={p.logo_url} size="sm" />
+            <div className="min-w-0 flex-1">
+              <p className="truncate font-display text-sm font-bold">{p.name}</p>
+              <p className="truncate text-xs text-muted-foreground">{p.url}</p>
+            </div>
+            <button
+              type="button"
+              aria-label="Edit platform"
+              onClick={() => setEditing(p)}
+              className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-surface-2"
+            >
+              <Pencil className="h-4 w-4" />
+            </button>
           </div>
-          <button
-            type="button"
-            aria-label={p.visible ? "Hide platform" : "Show platform"}
-            onClick={() =>
-              toggle({ data: { code, id: p.id, visible: !p.visible } }).catch(() =>
-                toast.error("Could not update"),
-              )
-            }
-            className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-surface-2"
-          >
-            {p.visible ? (
-              <Eye className="h-4 w-4 text-primary" />
-            ) : (
-              <EyeOff className="h-4 w-4 text-muted-foreground" />
-            )}
-          </button>
-          <button
-            type="button"
-            aria-label="Edit platform"
-            onClick={() => setEditing(p)}
-            className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-surface-2"
-          >
-            <Pencil className="h-4 w-4" />
-          </button>
-          <button
-            type="button"
-            aria-label="Delete platform"
-            onClick={() => {
-              if (!window.confirm(`Delete ${p.name}?`)) return;
-              remove({ data: { code, id: p.id } })
-                .then(() => toast.success("Deleted"))
-                .catch(() => toast.error("Could not delete"));
-            }}
-            className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-destructive/15 text-destructive"
-          >
-            <Trash2 className="h-4 w-4" />
-          </button>
+
+          <div className="mt-3 grid grid-cols-3 gap-2">
+            <button
+              type="button"
+              onClick={() =>
+                toggle({ data: { code, id: p.id, visible: !p.visible } }).catch(() =>
+                  toast.error("Could not update"),
+                )
+              }
+              className={`flex items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-[11px] font-semibold transition-colors ${
+                p.visible ? "bg-primary/12 text-primary" : "bg-surface-2 text-muted-foreground"
+              }`}
+            >
+              {p.visible ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+              {p.visible ? "Visible" : "Hidden"}
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                toggle({ data: { code, id: p.id, maintenance: !p.maintenance } }).catch(() =>
+                  toast.error("Could not update"),
+                )
+              }
+              className={`flex items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-[11px] font-semibold transition-colors ${
+                p.maintenance
+                  ? "bg-amber-400/15 text-amber-300"
+                  : "bg-surface-2 text-muted-foreground"
+              }`}
+            >
+              <Wrench className="h-3.5 w-3.5" />
+              {p.maintenance ? "In maintenance" : "Maintenance"}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (!window.confirm(`Remove ${p.name}?`)) return;
+                remove({ data: { code, id: p.id } })
+                  .then(() => toast.success("Removed"))
+                  .catch(() => toast.error("Could not remove"));
+              }}
+              className="flex items-center justify-center gap-1.5 rounded-xl bg-destructive/15 px-2 py-2.5 text-[11px] font-semibold text-destructive"
+            >
+              <Trash2 className="h-3.5 w-3.5" /> Remove
+            </button>
+          </div>
         </div>
       ))}
+
 
       {editing && (
         <PlatformForm
@@ -270,6 +300,8 @@ function PlatformForm({
           url,
           logo_url: logo,
           visible: platform?.visible ?? true,
+          maintenance: platform?.maintenance ?? false,
+
         },
       });
       toast.success(platform ? "Platform updated" : "Platform added");
@@ -329,50 +361,62 @@ function ImagePicker({
   value: string | null;
   onChange: (v: string | null) => void;
 }) {
+  const [busy, setBusy] = useState(false);
+
   return (
     <div className="space-y-2">
       <p className="text-xs uppercase tracking-wide text-muted-foreground">{label}</p>
       <div className="flex items-center gap-3">
-        {value && (
+        {value ? (
           <img
             src={value}
             alt=""
-            className="h-12 w-12 rounded-xl border border-border object-cover"
+            className="h-14 w-14 shrink-0 rounded-2xl border border-border object-cover"
           />
+        ) : (
+          <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl border border-dashed border-border text-muted-foreground">
+            <Upload className="h-5 w-5" />
+          </div>
         )}
-        <input
-          type="file"
-          accept="image/*"
-          onChange={async (e) => {
-            const file = e.target.files?.[0];
-            if (!file) return;
-            try {
-              onChange(await fileToCompressedDataUrl(file));
-            } catch (err) {
-              toast.error(err instanceof Error ? err.message : "Could not read image");
-            }
-          }}
-          className="flex-1 text-xs text-muted-foreground"
-        />
+        <label
+          className={`${ghostBtn} flex flex-1 cursor-pointer items-center justify-center gap-2 text-center`}
+        >
+          <Upload className="h-4 w-4" />
+          {busy ? "Processing…" : value ? "Change image" : "Upload from device"}
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={async (e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+              setBusy(true);
+              try {
+                onChange(await fileToCompressedDataUrl(file));
+                toast.success("Image ready — remember to save");
+              } catch (err) {
+                toast.error(err instanceof Error ? err.message : "Could not read image");
+              } finally {
+                setBusy(false);
+                e.target.value = "";
+              }
+            }}
+          />
+        </label>
         {value && (
           <button
             type="button"
             onClick={() => onChange(null)}
-            className="text-xs text-destructive hover:underline"
+            className="shrink-0 text-xs text-destructive hover:underline"
           >
             Remove
           </button>
         )}
       </div>
-      <input
-        className={input}
-        value={value && value.startsWith("http") ? value : ""}
-        onChange={(e) => onChange(e.target.value.trim() || null)}
-        placeholder="…or paste an image URL"
-      />
     </div>
   );
 }
+
 
 function AppearanceTab({
   code,
