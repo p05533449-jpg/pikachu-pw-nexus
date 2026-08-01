@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { ExternalLink } from "lucide-react";
-import { useSiteContent } from "@/hooks/useSiteContent";
+import { useEffect, useState } from "react";
+import { useSiteContent, type Platform } from "@/hooks/useSiteContent";
 import { MenuButton } from "@/components/MenuButton";
 import { SideNav } from "@/components/SideNav";
+import { MaintenanceDialog } from "@/components/MaintenanceDialog";
 
 export const Route = createFileRoute("/view/$id")({
   head: () => ({
@@ -29,7 +29,13 @@ function ViewerPage() {
   const { id } = Route.useParams();
   const { visiblePlatforms, settings, isLoading } = useSiteContent();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [maintenanceOf, setMaintenanceOf] = useState<Platform | null>(null);
   const platform = visiblePlatforms.find((p) => p.id === id);
+  const blocked = platform?.maintenance ?? false;
+
+  useEffect(() => {
+    if (platform?.maintenance) setMaintenanceOf(platform);
+  }, [platform]);
 
   return (
     <>
@@ -38,57 +44,45 @@ function ViewerPage() {
         onClose={() => setMenuOpen(false)}
         platforms={visiblePlatforms}
         settings={settings}
+        onMaintenance={setMaintenanceOf}
       />
 
-      <div className="flex h-screen flex-col">
-        <header className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-b border-border bg-background/80 px-3 py-3 backdrop-blur">
-          <MenuButton onClick={() => setMenuOpen(true)} />
-          <h1 className="truncate font-display text-lg font-bold">
-            {platform?.name ?? (isLoading ? "Loading…" : "Not available")}
-          </h1>
-          {platform && (
-            <a
-              href={platform.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Open in new tab"
-              className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-surface-2 text-primary"
-            >
-              <ExternalLink className="h-4 w-4" />
-            </a>
-          )}
-        </header>
+      {maintenanceOf && (
+        <MaintenanceDialog name={maintenanceOf.name} onClose={() => setMaintenanceOf(null)} />
+      )}
 
-        <div className="relative flex-1 bg-surface">
-          {platform ? (
-            <iframe
-              key={platform.id}
-              src={platform.url}
-              title={platform.name}
-              className="h-full w-full border-0"
-              sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-              referrerPolicy="no-referrer"
-            />
-          ) : (
-            !isLoading && (
-              <div className="flex h-full flex-col items-center justify-center gap-4 p-8 text-center">
-                <p className="text-sm text-muted-foreground">
-                  This platform is unavailable or hidden.
-                </p>
-                <Link
-                  to="/"
-                  className="rounded-2xl bg-primary px-5 py-3 font-display text-sm font-semibold text-primary-foreground"
-                >
-                  Back home
-                </Link>
-              </div>
-            )
-          )}
-          {platform && (
-            <p className="pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-background/80 px-3 py-1 text-[11px] text-muted-foreground">
-              If the site refuses to load, use the open icon above.
-            </p>
-          )}
+      <div className="fixed inset-0 bg-surface">
+        {platform && !blocked ? (
+          <iframe
+            key={platform.id}
+            src={platform.url}
+            title={platform.name}
+            className="h-full w-full border-0"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+            referrerPolicy="no-referrer"
+          />
+        ) : (
+          !isLoading && (
+            <div className="flex h-full flex-col items-center justify-center gap-4 p-8 text-center">
+              <p className="max-w-xs text-sm text-muted-foreground">
+                {blocked
+                  ? "This platform is currently under maintenance. Please wait a few hours and try again later."
+                  : "This platform is unavailable or hidden."}
+              </p>
+              <Link
+                to="/"
+                className="rounded-2xl bg-primary px-5 py-3 font-display text-sm font-semibold text-primary-foreground"
+              >
+                Back home
+              </Link>
+            </div>
+          )
+        )}
+
+        <div className="pointer-events-none fixed left-3 top-3 z-40">
+          <div className="pointer-events-auto">
+            <MenuButton onClick={() => setMenuOpen(true)} />
+          </div>
         </div>
       </div>
     </>
