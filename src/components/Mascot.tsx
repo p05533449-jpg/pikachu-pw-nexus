@@ -3,32 +3,38 @@ import pikachu from "@/assets/pikachu.png";
 type Props = {
   src?: string | null;
   className?: string;
+  /** Render without idle animation (small avatars, low-cost lists). */
+  static?: boolean;
 };
 
 /**
- * Idle-animated mascot: gentle breathing float, glowing aura, natural blink and
- * subtle pupil drift. Overlay eyes only render for the default mascot artwork.
+ * Idle-animated mascot: gentle breathing float with a soft aura, natural blink
+ * and subtle pupil drift. Overlay eyes only render for the default artwork.
  */
-export function Mascot({ src, className = "" }: Props) {
+export function Mascot({ src, className = "", static: isStatic = false }: Props) {
   const isDefault = !src;
   const image = src || pikachu;
 
   return (
-    <div className={`relative mx-auto aspect-[64/68] w-32 sm:w-40 ${className}`}>
+    <div className={`relative mx-auto aspect-[64/68] w-32 sm:w-36 ${className}`}>
+      {!isStatic && (
+        <div
+          aria-hidden
+          className="absolute inset-[12%] rounded-full opacity-40 blur-2xl"
+          style={{ background: "var(--gradient-accent)" }}
+        />
+      )}
       <div
-        aria-hidden
-        className="animate-glow absolute inset-0 rounded-full blur-2xl"
-        style={{ background: "var(--gradient-accent)" }}
-      />
-      <div className="animate-float relative h-full w-full will-change-transform">
+        className={`relative h-full w-full ${isStatic ? "" : "animate-float will-change-transform"}`}
+      >
         <img
           src={image}
           alt="PW Nexus mascot"
-          className="h-full w-full object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.55)]"
+          className="h-full w-full object-contain"
           loading="eager"
           decoding="async"
         />
-        {isDefault && (
+        {isDefault && !isStatic && (
           <>
             {[52, 74].map((left) => (
               <span
