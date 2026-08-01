@@ -44,8 +44,10 @@ export const savePlatform = createServerFn({ method: "POST" })
       url: sanitizeUrl(data.url),
       logo_url: sanitizeImage(data.logo_url ?? null),
       visible: data.visible ?? true,
+      maintenance: data.maintenance ?? false,
       updated_at: new Date().toISOString(),
     };
+
 
     if (data.id) {
       const { error } = await db.from("platforms").update(payload).eq("id", data.id);
@@ -76,18 +78,25 @@ export const deletePlatform = createServerFn({ method: "POST" })
 
 export const togglePlatform = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
-    codeSchema.extend({ id: z.string().uuid(), visible: z.boolean() }).parse(d),
+    codeSchema
+      .extend({
+        id: z.string().uuid(),
+        visible: z.boolean().optional(),
+        maintenance: z.boolean().optional(),
+      })
+      .parse(d),
   )
   .handler(async ({ data }) => {
     const { assertAdmin, admin } = await import("./site.server");
     assertAdmin(data.code);
-    const { error } = await admin()
-      .from("platforms")
-      .update({ visible: data.visible, updated_at: new Date().toISOString() })
-      .eq("id", data.id);
+    const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
+    if (typeof data.visible === "boolean") patch.visible = data.visible;
+    if (typeof data.maintenance === "boolean") patch.maintenance = data.maintenance;
+    const { error } = await admin().from("platforms").update(patch).eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true as const };
   });
+
 
 export const reorderPlatforms = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
