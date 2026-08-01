@@ -300,6 +300,8 @@ function PlatformForm({
           url,
           logo_url: logo,
           visible: platform?.visible ?? true,
+          maintenance: platform?.maintenance ?? false,
+
         },
       });
       toast.success(platform ? "Platform updated" : "Platform added");
@@ -359,50 +361,62 @@ function ImagePicker({
   value: string | null;
   onChange: (v: string | null) => void;
 }) {
+  const [busy, setBusy] = useState(false);
+
   return (
     <div className="space-y-2">
       <p className="text-xs uppercase tracking-wide text-muted-foreground">{label}</p>
       <div className="flex items-center gap-3">
-        {value && (
+        {value ? (
           <img
             src={value}
             alt=""
-            className="h-12 w-12 rounded-xl border border-border object-cover"
+            className="h-14 w-14 shrink-0 rounded-2xl border border-border object-cover"
           />
+        ) : (
+          <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl border border-dashed border-border text-muted-foreground">
+            <Upload className="h-5 w-5" />
+          </div>
         )}
-        <input
-          type="file"
-          accept="image/*"
-          onChange={async (e) => {
-            const file = e.target.files?.[0];
-            if (!file) return;
-            try {
-              onChange(await fileToCompressedDataUrl(file));
-            } catch (err) {
-              toast.error(err instanceof Error ? err.message : "Could not read image");
-            }
-          }}
-          className="flex-1 text-xs text-muted-foreground"
-        />
+        <label
+          className={`${ghostBtn} flex flex-1 cursor-pointer items-center justify-center gap-2 text-center`}
+        >
+          <Upload className="h-4 w-4" />
+          {busy ? "Processing…" : value ? "Change image" : "Upload from device"}
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={async (e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+              setBusy(true);
+              try {
+                onChange(await fileToCompressedDataUrl(file));
+                toast.success("Image ready — remember to save");
+              } catch (err) {
+                toast.error(err instanceof Error ? err.message : "Could not read image");
+              } finally {
+                setBusy(false);
+                e.target.value = "";
+              }
+            }}
+          />
+        </label>
         {value && (
           <button
             type="button"
             onClick={() => onChange(null)}
-            className="text-xs text-destructive hover:underline"
+            className="shrink-0 text-xs text-destructive hover:underline"
           >
             Remove
           </button>
         )}
       </div>
-      <input
-        className={input}
-        value={value && value.startsWith("http") ? value : ""}
-        onChange={(e) => onChange(e.target.value.trim() || null)}
-        placeholder="…or paste an image URL"
-      />
     </div>
   );
 }
+
 
 function AppearanceTab({
   code,
