@@ -9,7 +9,9 @@ const platformSchema = codeSchema.extend({
   url: z.string().trim().min(3).max(2000),
   logo_url: z.string().max(1_000_000).nullable().optional(),
   visible: z.boolean().optional(),
+  maintenance: z.boolean().optional(),
 });
+
 
 const settingsSchema = codeSchema.extend({
   brand_name: z.string().trim().min(1).max(60),
