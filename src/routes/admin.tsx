@@ -12,6 +12,8 @@ import {
   ArrowLeft,
   Wrench,
   Upload,
+  Monitor,
+  ExternalLink,
 } from "lucide-react";
 
 import { useSiteContent, type Platform } from "@/hooks/useSiteContent";
@@ -212,7 +214,36 @@ function PlatformsTab({ code, platforms }: { code: string; platforms: Platform[]
             </button>
           </div>
 
-          <div className="mt-3 grid grid-cols-3 gap-2">
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            {(["webview", "external"] as const).map((mode) => (
+              <button
+                key={mode}
+                type="button"
+                onClick={() =>
+                  toggle({ data: { code, id: p.id, open_mode: mode } }).catch(() =>
+                    toast.error("Could not update"),
+                  )
+                }
+                className={`flex items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-[11px] font-semibold transition-colors ${
+                  (p.open_mode ?? "webview") === mode
+                    ? "bg-primary/15 text-primary"
+                    : "bg-surface-2 text-muted-foreground"
+                }`}
+              >
+                {mode === "webview" ? (
+                  <>
+                    <Monitor className="h-3.5 w-3.5" /> WebView
+                  </>
+                ) : (
+                  <>
+                    <ExternalLink className="h-3.5 w-3.5" /> External browser
+                  </>
+                )}
+              </button>
+            ))}
+          </div>
+
+          <div className="mt-2 grid grid-cols-3 gap-2">
             <button
               type="button"
               onClick={() =>
@@ -286,6 +317,9 @@ function PlatformForm({
   const [name, setName] = useState(platform?.name ?? "");
   const [url, setUrl] = useState(platform?.url ?? "");
   const [logo, setLogo] = useState<string | null>(platform?.logo_url ?? null);
+  const [openMode, setOpenMode] = useState<"webview" | "external">(
+    platform?.open_mode ?? "webview",
+  );
   const [saving, setSaving] = useState(false);
 
   const submit = async (e: React.FormEvent) => {
@@ -301,7 +335,7 @@ function PlatformForm({
           logo_url: logo,
           visible: platform?.visible ?? true,
           maintenance: platform?.maintenance ?? false,
-
+          open_mode: openMode,
         },
       });
       toast.success(platform ? "Platform updated" : "Platform added");
@@ -338,6 +372,17 @@ function PlatformForm({
           onChange={(e) => setUrl(e.target.value)}
           placeholder="https://example.com"
         />
+        <label className="block space-y-2">
+          <span className="text-xs uppercase tracking-wide text-muted-foreground">Opening mode</span>
+          <select
+            className={input}
+            value={openMode}
+            onChange={(e) => setOpenMode(e.target.value as "webview" | "external")}
+          >
+            <option value="webview">Open in WebView</option>
+            <option value="external">Open in External Browser</option>
+          </select>
+        </label>
         <ImagePicker label="Platform logo" value={logo} onChange={setLogo} />
         <div className="flex gap-2 pt-1">
           <button type="button" onClick={onDone} className={`${ghostBtn} flex-1`}>
