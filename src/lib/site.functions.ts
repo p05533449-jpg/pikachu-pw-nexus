@@ -10,6 +10,7 @@ const platformSchema = codeSchema.extend({
   logo_url: z.string().max(1_000_000).nullable().optional(),
   visible: z.boolean().optional(),
   maintenance: z.boolean().optional(),
+  open_mode: z.enum(["webview", "external"]).optional(),
 });
 
 
