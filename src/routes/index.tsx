@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { ArrowUpRight, Wrench } from "lucide-react";
 import { useSiteContent, type Platform } from "@/hooks/useSiteContent";
 import { MenuButton } from "@/components/MenuButton";
 import { SideNav } from "@/components/SideNav";
@@ -56,10 +57,6 @@ function HomePage() {
       setMaintenanceOf(p);
       return;
     }
-    if (p.open_mode === "external") {
-      window.open(p.url, "_blank", "noopener,noreferrer");
-      return;
-    }
     void navigate({ to: "/view/$id", params: { id: p.id } });
   };
 
@@ -74,31 +71,32 @@ function HomePage() {
         />
       )}
 
-      <div aria-hidden className="app-canvas fixed inset-0 z-[-1]" />
-
       <SideNav
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
         platforms={visiblePlatforms}
         settings={settings}
-        onSelect={openPlatform}
+        onMaintenance={setMaintenanceOf}
       />
 
       {maintenanceOf && (
         <MaintenanceDialog name={maintenanceOf.name} onClose={() => setMaintenanceOf(null)} />
       )}
 
-      <div className="fixed left-4 top-4 z-50">
-        <MenuButton onClick={() => setMenuOpen(true)} />
-      </div>
+      <main className="mx-auto min-h-screen w-full max-w-3xl px-4 pb-20 sm:px-6">
+        <div className="flex items-center justify-between py-4">
+          <MenuButton onClick={() => setMenuOpen(true)} />
+          <span className="font-display text-sm font-semibold tracking-tight text-muted-foreground">
+            {brand}
+          </span>
+        </div>
 
-      <main className="relative z-10 mx-auto w-full max-w-6xl px-4 pb-14 pt-20 sm:pt-24">
-        <section className="flex flex-col items-center text-center">
+        <section className="flex flex-col items-center pt-2 text-center">
           <Mascot src={settings?.mascot_url ?? null} />
-          <h1 className="mt-4 font-display text-[1.75rem] font-extrabold leading-tight tracking-tight sm:text-4xl">
-            {lead} <span className="text-accent-gradient">{highlight}</span>
+          <h1 className="mt-5 font-display text-[2rem] font-extrabold leading-[1.08] tracking-tight sm:text-5xl">
+            {lead} <span className="text-accent-gradient block">{highlight}</span>
           </h1>
-          <p className="mt-2.5 max-w-md text-[13px] leading-relaxed text-zinc-400 sm:text-sm">
+          <p className="mt-3 max-w-md text-balance text-[15px] leading-relaxed text-muted-foreground">
             {settings?.home_subtitle ??
               "Your Premium Learning Sanctuary. Fast, clean, and distraction-free."}
           </p>
@@ -110,17 +108,21 @@ function HomePage() {
             alt="Featured banner"
             loading="lazy"
             decoding="async"
-            className="mx-auto mt-8 w-full rounded-3xl border border-white/5 object-cover"
+            className="mt-8 w-full rounded-3xl border border-border object-cover"
           />
         )}
 
-        <section className="mx-auto mt-10 flex w-full max-w-6xl flex-wrap justify-center gap-4 md:gap-6">
+        <div className="mt-10 flex items-baseline justify-between">
+          <h2 className="font-display text-lg font-bold">Your platforms</h2>
+          {!isLoading && visiblePlatforms.length > 0 && (
+            <span className="text-xs text-muted-foreground">{visiblePlatforms.length} available</span>
+          )}
+        </div>
+
+        <section className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
           {isLoading &&
             Array.from({ length: 4 }).map((_, i) => (
-              <div
-                key={i}
-                className="h-[168px] w-[calc(50%-0.5rem)] animate-pulse rounded-3xl border border-white/5 bg-zinc-900/40 sm:w-[180px] lg:w-[210px]"
-              />
+              <div key={i} className="h-40 animate-pulse rounded-3xl border border-border bg-surface" />
             ))}
 
           {!isLoading &&
@@ -129,30 +131,33 @@ function HomePage() {
                 key={p.id}
                 type="button"
                 onClick={() => openPlatform(p)}
-                className="group relative flex w-[calc(50%-0.5rem)] flex-col items-center overflow-hidden rounded-3xl border border-white/5 bg-zinc-900/40 p-5 backdrop-blur-md transition-colors duration-300 hover:border-primary/30 hover:bg-zinc-800/60 sm:w-[180px] md:p-6 lg:w-[210px]"
+                className="group relative flex flex-col items-center gap-3 rounded-3xl border border-border bg-surface p-4 text-center transition-[transform,border-color,background-color] duration-200 hover:-translate-y-0.5 hover:border-primary/50 hover:bg-surface-2 active:scale-[0.98]"
               >
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-primary/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                <div className="mb-5">
-                  <PlatformLogo name={p.name} logoUrl={p.logo_url} />
-                </div>
-                <span className="pointer-events-none text-center text-sm font-bold text-zinc-200 transition-colors duration-300 group-hover:text-primary md:text-base">
+                {p.maintenance && (
+                  <span className="absolute right-3 top-3 grid h-6 w-6 place-items-center rounded-full bg-primary/12 text-primary">
+                    <Wrench className="h-3 w-3" />
+                  </span>
+                )}
+                <PlatformLogo name={p.name} logoUrl={p.logo_url} />
+                <span className="line-clamp-2 font-display text-sm font-bold leading-snug">
                   {p.name}
                 </span>
-                {p.maintenance && (
-                  <span className="mt-2 text-[11px] font-medium text-amber-300">Maintenance</span>
-                )}
+                <span className="inline-flex items-center gap-1 text-[11px] font-medium text-primary">
+                  {p.maintenance ? "Maintenance" : "Open"}
+                  {!p.maintenance && <ArrowUpRight className="h-3 w-3" />}
+                </span>
               </button>
             ))}
         </section>
 
         {!isLoading && visiblePlatforms.length === 0 && (
-          <p className="mt-12 text-center text-sm text-zinc-400">
+          <p className="mt-12 text-center text-sm text-muted-foreground">
             No platforms yet. Add them from the admin panel.
           </p>
         )}
 
-        <footer className="mt-16 text-center text-xs text-zinc-500">
-          <Link to="/" className="hover:text-zinc-300">
+        <footer className="mt-16 text-center text-xs text-muted-foreground/70">
+          <Link to="/" className="hover:text-foreground">
             {brand}
           </Link>{" "}
           · Built for focused study

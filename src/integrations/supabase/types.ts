@@ -21,7 +21,6 @@ export type Database = {
           logo_url: string | null
           maintenance: boolean
           name: string
-          open_mode: string
           position: number
           updated_at: string
           url: string
@@ -33,7 +32,6 @@ export type Database = {
           logo_url?: string | null
           maintenance?: boolean
           name: string
-          open_mode?: string
           position?: number
           updated_at?: string
           url: string
@@ -45,7 +43,6 @@ export type Database = {
           logo_url?: string | null
           maintenance?: boolean
           name?: string
-          open_mode?: string
           position?: number
           updated_at?: string
           url?: string

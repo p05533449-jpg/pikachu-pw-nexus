@@ -37,18 +37,6 @@ function ViewerPage() {
     if (platform?.maintenance) setMaintenanceOf(platform);
   }, [platform]);
 
-  const select = (p: Platform) => {
-    if (p.maintenance) {
-      setMaintenanceOf(p);
-      return;
-    }
-    if (p.open_mode === "external") {
-      window.open(p.url, "_blank", "noopener,noreferrer");
-      return;
-    }
-    window.location.assign(`/view/${p.id}`);
-  };
-
   return (
     <>
       <SideNav
@@ -56,14 +44,14 @@ function ViewerPage() {
         onClose={() => setMenuOpen(false)}
         platforms={visiblePlatforms}
         settings={settings}
-        onSelect={select}
+        onMaintenance={setMaintenanceOf}
       />
 
       {maintenanceOf && (
         <MaintenanceDialog name={maintenanceOf.name} onClose={() => setMaintenanceOf(null)} />
       )}
 
-      <div className="fixed inset-0 bg-black">
+      <div className="fixed inset-0 bg-surface">
         {platform && !blocked ? (
           <iframe
             key={platform.id}
@@ -76,7 +64,7 @@ function ViewerPage() {
         ) : (
           !isLoading && (
             <div className="flex h-full flex-col items-center justify-center gap-4 p-8 text-center">
-              <p className="max-w-xs text-sm text-zinc-400">
+              <p className="max-w-xs text-sm text-muted-foreground">
                 {blocked
                   ? "This platform is currently under maintenance. Please wait a few hours and try again later."
                   : "This platform is unavailable or hidden."}
@@ -91,8 +79,10 @@ function ViewerPage() {
           )
         )}
 
-        <div className="fixed left-4 top-4 z-50">
-          <MenuButton onClick={() => setMenuOpen(true)} />
+        <div className="pointer-events-none fixed left-3 top-3 z-40">
+          <div className="pointer-events-auto">
+            <MenuButton onClick={() => setMenuOpen(true)} />
+          </div>
         </div>
       </div>
     </>
