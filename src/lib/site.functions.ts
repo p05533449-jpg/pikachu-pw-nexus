@@ -46,6 +46,7 @@ export const savePlatform = createServerFn({ method: "POST" })
       logo_url: sanitizeImage(data.logo_url ?? null),
       visible: data.visible ?? true,
       maintenance: data.maintenance ?? false,
+      open_mode: data.open_mode ?? "webview",
       updated_at: new Date().toISOString(),
     };
 
@@ -84,6 +85,7 @@ export const togglePlatform = createServerFn({ method: "POST" })
         id: z.string().uuid(),
         visible: z.boolean().optional(),
         maintenance: z.boolean().optional(),
+        open_mode: z.enum(["webview", "external"]).optional(),
       })
       .parse(d),
   )
@@ -94,10 +96,13 @@ export const togglePlatform = createServerFn({ method: "POST" })
       updated_at: string;
       visible?: boolean;
       maintenance?: boolean;
+      open_mode?: "webview" | "external";
     } = { updated_at: new Date().toISOString() };
     if (typeof data.visible === "boolean") patch.visible = data.visible;
     if (typeof data.maintenance === "boolean") patch.maintenance = data.maintenance;
+    if (data.open_mode) patch.open_mode = data.open_mode;
     const { error } = await admin().from("platforms").update(patch).eq("id", data.id);
+
 
     if (error) throw new Error(error.message);
     return { ok: true as const };
