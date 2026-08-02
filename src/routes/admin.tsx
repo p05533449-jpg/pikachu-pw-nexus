@@ -372,6 +372,17 @@ function PlatformForm({
           onChange={(e) => setUrl(e.target.value)}
           placeholder="https://example.com"
         />
+        <label className="block space-y-2">
+          <span className="text-xs uppercase tracking-wide text-muted-foreground">Opening mode</span>
+          <select
+            className={input}
+            value={openMode}
+            onChange={(e) => setOpenMode(e.target.value as "webview" | "external")}
+          >
+            <option value="webview">Open in WebView</option>
+            <option value="external">Open in External Browser</option>
+          </select>
+        </label>
         <ImagePicker label="Platform logo" value={logo} onChange={setLogo} />
         <div className="flex gap-2 pt-1">
           <button type="button" onClick={onDone} className={`${ghostBtn} flex-1`}>
