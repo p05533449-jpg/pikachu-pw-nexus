@@ -317,6 +317,9 @@ function PlatformForm({
   const [name, setName] = useState(platform?.name ?? "");
   const [url, setUrl] = useState(platform?.url ?? "");
   const [logo, setLogo] = useState<string | null>(platform?.logo_url ?? null);
+  const [openMode, setOpenMode] = useState<"webview" | "external">(
+    platform?.open_mode ?? "webview",
+  );
   const [saving, setSaving] = useState(false);
 
   const submit = async (e: React.FormEvent) => {
@@ -332,7 +335,7 @@ function PlatformForm({
           logo_url: logo,
           visible: platform?.visible ?? true,
           maintenance: platform?.maintenance ?? false,
-
+          open_mode: openMode,
         },
       });
       toast.success(platform ? "Platform updated" : "Platform added");
