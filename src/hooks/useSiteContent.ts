@@ -10,6 +10,7 @@ export type Platform = {
   position: number;
   visible: boolean;
   maintenance: boolean;
+  open_mode: "webview" | "external";
 };
 
 export type SiteSettings = {
@@ -29,7 +30,7 @@ export type SiteSettings = {
 async function fetchPlatforms(): Promise<Platform[]> {
   const { data, error } = await supabase
     .from("platforms")
-    .select("id,name,url,logo_url,position,visible,maintenance")
+    .select("id,name,url,logo_url,position,visible,maintenance,open_mode")
     .order("position", { ascending: true });
   if (error) throw new Error(error.message);
   return (data ?? []) as Platform[];

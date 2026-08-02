@@ -1,0 +1,1 @@
+ALTER TABLE public.platforms ADD COLUMN IF NOT EXISTS open_mode TEXT NOT NULL DEFAULT 'webview';
