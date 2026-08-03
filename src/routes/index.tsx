@@ -151,9 +151,10 @@ function HomePage() {
                   <PlatformLogo name={p.name} logoUrl={p.logo_url} />
                 </div>
 
-                <span className="pointer-events-none text-center text-sm font-bold text-zinc-200 transition-colors duration-300 group-hover:text-primary md:text-base">
+                <span className="pointer-events-none relative text-center text-sm font-bold text-zinc-100 transition-colors duration-300 group-hover:text-primary md:text-base">
                   {p.name}
                 </span>
+
                 {p.maintenance && (
                   <span className="mt-2 text-[11px] font-medium text-amber-300">Maintenance</span>
                 )}
