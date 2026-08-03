@@ -1,0 +1,1 @@
+UPDATE public.site_settings SET home_subtitle = 'Education Must Be Free For Everyone', updated_at = now() WHERE id = 'main';

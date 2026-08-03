@@ -4,10 +4,14 @@ type Props = {
   size?: "sm" | "lg";
 };
 
-/** Gradient-ringed platform tile, matching the reference card artwork treatment. */
+/**
+ * Gradient-ringed platform tile. The logo is always contained inside the tile:
+ * any aspect ratio (portrait, landscape, square, SVG, transparent PNG) is
+ * scaled down to fit and stays centred without stretching or cropping.
+ */
 export function PlatformLogo({ name, logoUrl, size = "lg" }: Props) {
-  const box = size === "lg" ? "h-20 w-20 rounded-2xl" : "h-11 w-11 rounded-xl";
-  const inner = size === "lg" ? "rounded-2xl" : "rounded-[10px]";
+  const box = size === "lg" ? "h-20 w-20 rounded-2xl" : "h-10 w-10 rounded-xl";
+  const inner = size === "lg" ? "rounded-2xl p-1.5" : "rounded-[10px] p-1";
 
   const initials = name
     .split(/\s+/)
@@ -29,12 +33,10 @@ export function PlatformLogo({ name, logoUrl, size = "lg" }: Props) {
             alt={`${name} logo`}
             loading="lazy"
             decoding="async"
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+            className="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-110"
           />
         ) : (
-          <span
-            className={`font-bold text-primary ${size === "lg" ? "text-xl" : "text-[11px]"}`}
-          >
+          <span className={`font-bold text-primary ${size === "lg" ? "text-xl" : "text-[10px]"}`}>
             {initials}
           </span>
         )}

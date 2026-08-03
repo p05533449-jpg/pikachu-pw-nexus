@@ -63,6 +63,12 @@ function HomePage() {
     void navigate({ to: "/view/$id", params: { id: p.id } });
   };
 
+  const tagline: string[] = (
+    settings?.home_subtitle?.trim() || "Education Must Be Free For Everyone"
+  ).split(" ");
+
+
+
   return (
     <>
       {showWelcome && (
@@ -92,17 +98,26 @@ function HomePage() {
         <MenuButton onClick={() => setMenuOpen(true)} />
       </div>
 
-      <main className="relative z-10 mx-auto w-full max-w-6xl px-4 pb-14 pt-20 sm:pt-24">
+      <main className="relative z-10 mx-auto w-full max-w-6xl px-4 pb-14 pt-16 sm:pt-20">
         <section className="flex flex-col items-center text-center">
-          <Mascot src={settings?.mascot_url ?? null} />
-          <h1 className="mt-4 font-display text-[1.75rem] font-extrabold leading-tight tracking-tight sm:text-4xl">
-            {lead} <span className="text-accent-gradient">{highlight}</span>
+          <Mascot src={settings?.mascot_url ?? null} className="!w-[88px] sm:!w-[104px]" />
+          <h1 className="mt-3 font-display text-[3.1rem] font-black leading-[1.02] tracking-tight sm:text-6xl">
+            <span className="hero-glow-white">{lead}</span>{" "}
+            <span className="hero-glow-green text-primary">{highlight}</span>
           </h1>
-          <p className="mt-2.5 max-w-md text-[13px] leading-relaxed text-zinc-400 sm:text-sm">
-            {settings?.home_subtitle ??
-              "Your Premium Learning Sanctuary. Fast, clean, and distraction-free."}
+          <p className="mt-5 max-w-xl font-display text-lg font-bold leading-snug text-white sm:text-xl">
+            {tagline.map((part, i) =>
+              part.toLowerCase() === "free" ? (
+                <span key={i} className="hero-glow-green text-primary">
+                  {part}{" "}
+                </span>
+              ) : (
+                <span key={i}>{part} </span>
+              ),
+            )}
           </p>
         </section>
+
 
         {settings?.banner_url && (
           <img
