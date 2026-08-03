@@ -33,10 +33,11 @@ export function SideNav({ open, onClose, platforms, settings, onSelect }: Props)
         }`}
       />
       <aside
-        className={`absolute inset-y-0 left-0 flex w-[76%] max-w-[300px] flex-col border-r border-primary/10 bg-[#0a0a0a]/95 backdrop-blur-md transition-transform duration-300 ease-out will-change-transform ${
+        className={`absolute inset-y-0 left-0 flex w-[76%] max-w-[300px] flex-col border-r border-primary/20 bg-black/90 shadow-[8px_0_40px_rgba(0,0,0,0.8),inset_-1px_0_0_rgba(16,185,129,0.08)] backdrop-blur-xl transition-transform duration-300 ease-out will-change-transform ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}
       >
+
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-white/5 px-4 py-5">
           <Link
             to="/admin"
