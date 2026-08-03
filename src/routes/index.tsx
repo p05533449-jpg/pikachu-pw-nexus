@@ -63,6 +63,12 @@ function HomePage() {
     void navigate({ to: "/view/$id", params: { id: p.id } });
   };
 
+  const tagline: string[] = (
+    settings?.home_subtitle?.trim() || "Education Must Be Free For Everyone"
+  ).split(" ");
+
+
+
   return (
     <>
       {showWelcome && (
