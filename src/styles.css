@@ -41,11 +41,12 @@
 :root {
   --radius: 1rem;
   /* Reference palette: near-black canvas with emerald / green accents */
-  --background: #020504;
+  --background: #000000;
   --foreground: #ffffff;
-  --surface: #0a0a0a;
-  --surface-2: #18181b;
-  --card: #0a0a0a;
+  --surface: #070707;
+  --surface-2: #141416;
+  --card: #070707;
+
   --card-foreground: #ffffff;
   --popover: #0a0a0a;
   --popover-foreground: #ffffff;
