@@ -144,15 +144,17 @@ function HomePage() {
                 key={p.id}
                 type="button"
                 onClick={() => openPlatform(p)}
-                className="group relative flex w-[calc(50%-0.5rem)] flex-col items-center overflow-hidden rounded-3xl border border-white/5 bg-zinc-900/40 p-5 backdrop-blur-md transition-colors duration-300 hover:border-primary/30 hover:bg-zinc-800/60 sm:w-[180px] md:p-6 lg:w-[210px]"
+                className="group relative flex w-[calc(50%-0.5rem)] flex-col items-center overflow-hidden rounded-3xl border border-primary/15 bg-white/[0.02] p-5 shadow-[0_10px_30px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-primary/45 hover:shadow-[0_0_30px_rgba(16,185,129,0.25)] active:scale-[0.97] sm:w-[180px] md:p-6 lg:w-[210px]"
               >
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-primary/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                <div className="mb-5">
+                <div className="absolute inset-0 bg-gradient-to-b from-white/[0.06] via-transparent to-primary/10 opacity-60 transition-opacity duration-300 group-hover:opacity-100" />
+                <div className="relative mb-5">
                   <PlatformLogo name={p.name} logoUrl={p.logo_url} />
                 </div>
-                <span className="pointer-events-none text-center text-sm font-bold text-zinc-200 transition-colors duration-300 group-hover:text-primary md:text-base">
+
+                <span className="pointer-events-none relative text-center text-sm font-bold text-zinc-100 transition-colors duration-300 group-hover:text-primary md:text-base">
                   {p.name}
                 </span>
+
                 {p.maintenance && (
                   <span className="mt-2 text-[11px] font-medium text-amber-300">Maintenance</span>
                 )}

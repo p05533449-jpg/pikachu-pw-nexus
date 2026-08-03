@@ -6,9 +6,10 @@ export function MenuButton({ onClick }: { onClick: () => void }) {
       type="button"
       onClick={onClick}
       aria-label="Open navigation menu"
-      className="rounded-xl border border-primary/20 bg-surface/90 p-3 text-primary shadow-[0_4px_20px_rgba(0,0,0,0.5)] backdrop-blur-md transition-colors hover:border-primary/40 hover:bg-primary/10"
+      className="rounded-2xl border border-primary/30 bg-black/80 p-3.5 text-primary shadow-[0_0_20px_rgba(16,185,129,0.22),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-md transition-all duration-300 hover:border-primary/60 hover:shadow-[0_0_28px_rgba(16,185,129,0.4)] active:scale-95"
     >
-      <Menu className="h-6 w-6" />
+      <Menu className="h-6 w-6" strokeWidth={2.5} />
     </button>
   );
 }
+

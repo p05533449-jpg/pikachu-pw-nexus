@@ -41,11 +41,12 @@
 :root {
   --radius: 1rem;
   /* Reference palette: near-black canvas with emerald / green accents */
-  --background: #020504;
+  --background: #000000;
   --foreground: #ffffff;
-  --surface: #0a0a0a;
-  --surface-2: #18181b;
-  --card: #0a0a0a;
+  --surface: #070707;
+  --surface-2: #141416;
+  --card: #070707;
+
   --card-foreground: #ffffff;
   --popover: #0a0a0a;
   --popover-foreground: #ffffff;
@@ -113,18 +114,20 @@
 }
 
 @utility app-canvas {
-  background-color: #020504;
+  background-color: #000000;
   background-image:
-    radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.12), transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.05), transparent 50%);
+    radial-gradient(60% 32% at 50% 0%, rgba(16, 185, 129, 0.18), transparent 70%),
+    radial-gradient(45% 25% at 92% 92%, rgba(16, 185, 129, 0.08), transparent 70%);
 }
+
 
 @utility glass-panel {
   background: var(--glass);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(14px);
   border: 1px solid rgba(16, 185, 129, 0.2);
   box-shadow: var(--shadow-card);
 }
+
 
 @utility text-accent-gradient {
   background: var(--gradient-accent);
