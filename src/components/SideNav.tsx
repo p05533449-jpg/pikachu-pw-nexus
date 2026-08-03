@@ -19,7 +19,8 @@ export function SideNav({ open, onClose, platforms, settings, onSelect }: Props)
   const rest = restWords.join(" ");
 
   const itemClass =
-    "flex w-full items-center gap-4 rounded-2xl px-3 py-3 text-left font-display text-[17px] font-bold text-zinc-400 transition-colors hover:text-primary";
+    "flex w-full items-center gap-4 rounded-2xl px-3 py-3 text-left font-display text-[17px] font-bold text-zinc-400 transition-all duration-200 hover:bg-primary/10 hover:text-primary";
+
 
   return (
     <div
