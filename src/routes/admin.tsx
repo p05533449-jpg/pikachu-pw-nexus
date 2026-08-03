@@ -75,8 +75,9 @@ function AdminPage() {
       sessionStorage.setItem("nexus-admin", code);
       setUnlocked(true);
       toast.success("Welcome back");
-    } catch {
-      toast.error("Invalid Admin Code");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "";
+      toast.error(msg.includes("not configured") ? msg : "Invalid Admin Code");
     } finally {
       setChecking(false);
     }
