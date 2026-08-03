@@ -11,7 +11,7 @@ type Props = {
  */
 export function PlatformLogo({ name, logoUrl, size = "lg" }: Props) {
   const box = size === "lg" ? "h-20 w-20 rounded-2xl" : "h-10 w-10 rounded-xl";
-  const inner = size === "lg" ? "rounded-2xl p-1.5" : "rounded-[10px] p-1";
+  const inner = size === "lg" ? "rounded-[14px]" : "rounded-[9px]";
 
   const initials = name
     .split(/\s+/)
@@ -22,7 +22,7 @@ export function PlatformLogo({ name, logoUrl, size = "lg" }: Props) {
 
   return (
     <div
-      className={`${box} shrink-0 bg-gradient-to-br from-green-400 to-emerald-600 p-[2px] shadow-lg transition-all duration-300 group-hover:shadow-primary/20`}
+      className={`${box} shrink-0 bg-gradient-to-br from-green-400 to-emerald-600 p-[2px] shadow-[0_0_18px_rgba(16,185,129,0.28)] transition-all duration-300 group-hover:shadow-[0_0_26px_rgba(16,185,129,0.45)]`}
     >
       <div
         className={`${inner} flex h-full w-full items-center justify-center overflow-hidden bg-black`}
@@ -33,7 +33,7 @@ export function PlatformLogo({ name, logoUrl, size = "lg" }: Props) {
             alt={`${name} logo`}
             loading="lazy"
             decoding="async"
-            className="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-110"
+            className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
           <span className={`font-bold text-primary ${size === "lg" ? "text-xl" : "text-[10px]"}`}>
@@ -44,3 +44,4 @@ export function PlatformLogo({ name, logoUrl, size = "lg" }: Props) {
     </div>
   );
 }
+
