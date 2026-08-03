@@ -1,11 +1,19 @@
 // Server-only helpers for admin-protected site content mutations.
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
+/**
+ * Validates the admin access code against the server-only secret.
+ * Reads the env var at call time (edge runtimes inject env per request) and
+ * trims both sides so a trailing newline in the stored secret can't lock the
+ * admin out on the deployed site.
+ */
 export function assertAdmin(code: string) {
-  const expected = process.env.ADMIN_ACCESS_CODE;
-  if (!expected) throw new Error("Admin access is not configured");
-  if (!code || code !== expected) throw new Error("Invalid Admin Code");
+  const raw = process.env.ADMIN_ACCESS_CODE ?? process.env.ADMIN_CODE;
+  const expected = (raw ?? "").trim();
+  if (!expected) throw new Error("Admin access is not configured on the server");
+  if ((code ?? "").trim() !== expected) throw new Error("Invalid Admin Code");
 }
+
 
 export function admin() {
   return supabaseAdmin;
