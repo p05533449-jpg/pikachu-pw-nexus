@@ -70,8 +70,10 @@ function ViewerPage() {
             src={platform.url}
             title={platform.name}
             className="h-full w-full border-0"
-            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-            referrerPolicy="no-referrer"
+            allow="fullscreen; autoplay; encrypted-media; picture-in-picture; clipboard-write; accelerometer; gyroscope"
+            allowFullScreen
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation allow-downloads allow-modals allow-orientation-lock"
+            referrerPolicy="no-referrer-when-downgrade"
           />
         ) : (
           !isLoading && (
