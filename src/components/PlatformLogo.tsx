@@ -25,7 +25,7 @@ export function PlatformLogo({ name, logoUrl, size = "lg" }: Props) {
       className={`${box} shrink-0 bg-gradient-to-br from-green-400 to-emerald-600 p-[2px] shadow-[0_0_18px_rgba(16,185,129,0.28)] transition-all duration-300 group-hover:shadow-[0_0_26px_rgba(16,185,129,0.45)]`}
     >
       <div
-        className={`${inner} flex h-full w-full items-center justify-center overflow-hidden bg-black`}
+        className={`${inner} relative flex h-full w-full items-center justify-center overflow-hidden bg-black ${size === "lg" ? "p-2" : "p-1"}`}
       >
         {logoUrl ? (
           <img
@@ -33,7 +33,7 @@ export function PlatformLogo({ name, logoUrl, size = "lg" }: Props) {
             alt={`${name} logo`}
             loading="lazy"
             decoding="async"
-            className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
+            className="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
           <span className={`font-bold text-primary ${size === "lg" ? "text-xl" : "text-[10px]"}`}>
