@@ -37,16 +37,26 @@ function HomePage() {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
+  const [welcomeChecked, setWelcomeChecked] = useState(false);
   const [maintenanceOf, setMaintenanceOf] = useState<Platform | null>(null);
 
   useEffect(() => {
     if (sessionStorage.getItem("nexus-welcomed") !== "1") setShowWelcome(true);
+    setWelcomeChecked(true);
   }, []);
 
   const dismissWelcome = () => {
     sessionStorage.setItem("nexus-welcomed", "1");
     setShowWelcome(false);
   };
+
+  /** Entry animation only starts once the welcome overlay is out of the way. */
+  const ready = welcomeChecked && !showWelcome;
+  const enter = (cls: "enter-drop" | "enter-card", ms: number) => ({
+    className: ready ? cls : "opacity-0",
+    style: ready ? delay(ms) : undefined,
+  });
+
 
   const brand = settings?.brand_name ?? "PW Nexus";
   const homeTitle = settings?.home_title ?? `Welcome to ${brand}`;
