@@ -29,6 +29,9 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
+/** Stagger helper: sets the delay consumed by the enter-* animation utilities. */
+const delay = (ms: number) => ({ "--enter-delay": `${ms}ms` }) as React.CSSProperties;
+
 function HomePage() {
   const { visiblePlatforms, settings, isLoading } = useSiteContent();
   const navigate = useNavigate();
