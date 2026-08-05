@@ -91,11 +91,14 @@
   }
 }
 
-/* Enter from above: fade + slight slide-down. Used with a stagger delay. */
+/* Enter from above: fade + slide-down. Used with a stagger delay. */
 @keyframes enter-drop {
   from {
     opacity: 0;
-    transform: translate3d(0, -14px, 0);
+    transform: translate3d(0, -48px, 0);
+  }
+  60% {
+    opacity: 1;
   }
   to {
     opacity: 1;
@@ -103,11 +106,11 @@
   }
 }
 
-/* Cards: fade in while scaling up slightly, logo + title as one unit. */
+/* Cards: drop in from above while scaling up, logo + title as one unit. */
 @keyframes enter-card {
   from {
     opacity: 0;
-    transform: translate3d(0, -10px, 0) scale(0.965);
+    transform: translate3d(0, -40px, 0) scale(0.92);
   }
   to {
     opacity: 1;
@@ -116,16 +119,17 @@
 }
 
 @utility enter-drop {
-  animation: enter-drop 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: enter-drop 1s cubic-bezier(0.16, 1, 0.3, 1) both;
   animation-delay: var(--enter-delay, 0ms);
   will-change: opacity, transform;
 }
 
 @utility enter-card {
-  animation: enter-card 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: enter-card 1s cubic-bezier(0.16, 1, 0.3, 1) both;
   animation-delay: var(--enter-delay, 0ms);
   will-change: opacity, transform;
 }
+
 
 
 @keyframes blink {
