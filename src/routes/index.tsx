@@ -107,25 +107,27 @@ function HomePage() {
         <MaintenanceDialog name={maintenanceOf.name} onClose={() => setMaintenanceOf(null)} />
       )}
 
-      <div className="fixed left-4 top-4 z-50 enter-drop">
-        <MenuButton onClick={() => setMenuOpen(true)} />
+      <div className="fixed left-4 top-4 z-50">
+        <div {...enter("enter-drop", 0)}>
+          <MenuButton onClick={() => setMenuOpen(true)} />
+        </div>
       </div>
 
       <main className="relative z-10 mx-auto w-full max-w-6xl px-4 pb-14 pt-16 sm:pt-20">
         <section className="flex flex-col items-center text-center">
-          <div className="enter-drop" style={delay(60)}>
+          <div {...enter("enter-drop", 120)}>
             <Mascot src={settings?.mascot_url ?? null} className="!w-[88px] sm:!w-[104px]" />
           </div>
           <h1
-            className="enter-drop mt-3 font-display text-[3.1rem] font-black leading-[1.02] tracking-tight sm:text-6xl"
-            style={delay(140)}
+            {...enter("enter-drop", 280)}
+            className={`${enter("enter-drop", 280).className} mt-3 font-display text-[3.1rem] font-black leading-[1.02] tracking-tight sm:text-6xl`}
           >
             <span className="hero-glow-white">{lead}</span>{" "}
             <span className="hero-glow-green text-primary">{highlight}</span>
           </h1>
           <p
-            className="enter-drop mt-5 max-w-xl font-display text-lg font-bold leading-snug text-white sm:text-xl"
-            style={delay(220)}
+            {...enter("enter-drop", 440)}
+            className={`${enter("enter-drop", 440).className} mt-5 max-w-xl font-display text-lg font-bold leading-snug text-white sm:text-xl`}
           >
             {tagline.map((part, i) =>
               part.toLowerCase() === "free" ? (
@@ -145,8 +147,8 @@ function HomePage() {
             alt="Featured banner"
             loading="lazy"
             decoding="async"
-            className="enter-drop mx-auto mt-8 w-full rounded-3xl border border-white/5 object-cover"
-            style={delay(300)}
+            {...enter("enter-drop", 580)}
+            className={`${enter("enter-drop", 580).className} mx-auto mt-8 w-full rounded-3xl border border-white/5 object-cover`}
           />
         )}
 
@@ -165,9 +167,10 @@ function HomePage() {
                 key={p.id}
                 type="button"
                 onClick={() => openPlatform(p)}
-                style={delay(340 + i * 70)}
-                className="enter-card group relative flex h-[188px] flex-col items-center justify-center gap-4 overflow-hidden rounded-[26px] border border-primary/15 bg-white/[0.02] px-4 shadow-[0_10px_30px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-md transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1 hover:border-primary/45 hover:shadow-[0_0_30px_rgba(16,185,129,0.25)] active:scale-[0.97]"
+                {...enter("enter-card", 700 + i * 130)}
+                className={`${enter("enter-card", 0).className} group relative flex h-[188px] flex-col items-center justify-center gap-4 overflow-hidden rounded-[26px] border border-primary/15 bg-white/[0.02] px-4 shadow-[0_10px_30px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-md transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1 hover:border-primary/45 hover:shadow-[0_0_30px_rgba(16,185,129,0.25)] active:scale-[0.97]`}
               >
+
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/[0.06] via-transparent to-primary/10 opacity-60 transition-opacity duration-300 group-hover:opacity-100" />
                 <div className="relative">
                   <PlatformLogo name={p.name} logoUrl={p.logo_url} />
