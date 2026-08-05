@@ -94,18 +94,26 @@ function HomePage() {
         <MaintenanceDialog name={maintenanceOf.name} onClose={() => setMaintenanceOf(null)} />
       )}
 
-      <div className="fixed left-4 top-4 z-50">
+      <div className="fixed left-4 top-4 z-50 enter-drop">
         <MenuButton onClick={() => setMenuOpen(true)} />
       </div>
 
       <main className="relative z-10 mx-auto w-full max-w-6xl px-4 pb-14 pt-16 sm:pt-20">
         <section className="flex flex-col items-center text-center">
-          <Mascot src={settings?.mascot_url ?? null} className="!w-[88px] sm:!w-[104px]" />
-          <h1 className="mt-3 font-display text-[3.1rem] font-black leading-[1.02] tracking-tight sm:text-6xl">
+          <div className="enter-drop" style={delay(60)}>
+            <Mascot src={settings?.mascot_url ?? null} className="!w-[88px] sm:!w-[104px]" />
+          </div>
+          <h1
+            className="enter-drop mt-3 font-display text-[3.1rem] font-black leading-[1.02] tracking-tight sm:text-6xl"
+            style={delay(140)}
+          >
             <span className="hero-glow-white">{lead}</span>{" "}
             <span className="hero-glow-green text-primary">{highlight}</span>
           </h1>
-          <p className="mt-5 max-w-xl font-display text-lg font-bold leading-snug text-white sm:text-xl">
+          <p
+            className="enter-drop mt-5 max-w-xl font-display text-lg font-bold leading-snug text-white sm:text-xl"
+            style={delay(220)}
+          >
             {tagline.map((part, i) =>
               part.toLowerCase() === "free" ? (
                 <span key={i} className="hero-glow-green text-primary">
@@ -118,45 +126,48 @@ function HomePage() {
           </p>
         </section>
 
-
         {settings?.banner_url && (
           <img
             src={settings.banner_url}
             alt="Featured banner"
             loading="lazy"
             decoding="async"
-            className="mx-auto mt-8 w-full rounded-3xl border border-white/5 object-cover"
+            className="enter-drop mx-auto mt-8 w-full rounded-3xl border border-white/5 object-cover"
+            style={delay(300)}
           />
         )}
 
-        <section className="mx-auto mt-10 flex w-full max-w-6xl flex-wrap justify-center gap-4 md:gap-6">
+        <section className="mx-auto mt-10 grid w-full max-w-3xl grid-cols-2 gap-4 sm:gap-5">
           {isLoading &&
             Array.from({ length: 4 }).map((_, i) => (
               <div
                 key={i}
-                className="h-[168px] w-[calc(50%-0.5rem)] animate-pulse rounded-3xl border border-white/5 bg-zinc-900/40 sm:w-[180px] lg:w-[210px]"
+                className="h-[188px] animate-pulse rounded-[26px] border border-white/5 bg-zinc-900/40"
               />
             ))}
 
           {!isLoading &&
-            visiblePlatforms.map((p) => (
+            visiblePlatforms.map((p, i) => (
               <button
                 key={p.id}
                 type="button"
                 onClick={() => openPlatform(p)}
-                className="group relative flex w-[calc(50%-0.5rem)] flex-col items-center overflow-hidden rounded-3xl border border-primary/15 bg-white/[0.02] p-5 shadow-[0_10px_30px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-primary/45 hover:shadow-[0_0_30px_rgba(16,185,129,0.25)] active:scale-[0.97] sm:w-[180px] md:p-6 lg:w-[210px]"
+                style={delay(340 + i * 70)}
+                className="enter-card group relative flex h-[188px] flex-col items-center justify-center gap-4 overflow-hidden rounded-[26px] border border-primary/15 bg-white/[0.02] px-4 shadow-[0_10px_30px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-md transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1 hover:border-primary/45 hover:shadow-[0_0_30px_rgba(16,185,129,0.25)] active:scale-[0.97]"
               >
-                <div className="absolute inset-0 bg-gradient-to-b from-white/[0.06] via-transparent to-primary/10 opacity-60 transition-opacity duration-300 group-hover:opacity-100" />
-                <div className="relative mb-5">
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/[0.06] via-transparent to-primary/10 opacity-60 transition-opacity duration-300 group-hover:opacity-100" />
+                <div className="relative">
                   <PlatformLogo name={p.name} logoUrl={p.logo_url} />
                 </div>
 
-                <span className="pointer-events-none relative text-center text-sm font-bold text-zinc-100 transition-colors duration-300 group-hover:text-primary md:text-base">
+                <span className="pointer-events-none relative line-clamp-2 text-center font-display text-[15px] font-bold text-zinc-100 transition-colors duration-300 group-hover:text-primary md:text-base">
                   {p.name}
                 </span>
 
                 {p.maintenance && (
-                  <span className="mt-2 text-[11px] font-medium text-amber-300">Maintenance</span>
+                  <span className="absolute bottom-3 text-[11px] font-medium text-amber-300">
+                    Maintenance
+                  </span>
                 )}
               </button>
             ))}
@@ -175,6 +186,7 @@ function HomePage() {
           · Built for focused study
         </footer>
       </main>
+
     </>
   );
 }
