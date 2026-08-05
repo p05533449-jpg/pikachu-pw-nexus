@@ -91,6 +91,43 @@
   }
 }
 
+/* Enter from above: fade + slight slide-down. Used with a stagger delay. */
+@keyframes enter-drop {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Cards: fade in while scaling up slightly, logo + title as one unit. */
+@keyframes enter-card {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -10px, 0) scale(0.965);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@utility enter-drop {
+  animation: enter-drop 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--enter-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+@utility enter-card {
+  animation: enter-card 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--enter-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+
 @keyframes blink {
   0%,
   92%,
