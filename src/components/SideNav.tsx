@@ -46,9 +46,16 @@ export function SideNav({ open, onClose, platforms, settings, onSelect }: Props)
             className="flex min-w-0 items-center gap-3"
             aria-label="Admin panel"
           >
-            <div className="h-11 w-11 shrink-0 rounded-2xl border border-primary/40 bg-black/60 p-1 shadow-[0_0_18px_rgba(16,185,129,0.25)]">
-              <Mascot src={settings?.mascot_url ?? null} className="!w-full" static />
+            <div className="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-2xl border border-primary/40 bg-black/60 p-1.5 shadow-[0_0_18px_rgba(16,185,129,0.25)]">
+              <img
+                src={settings?.mascot_url ?? pikachu}
+                alt=""
+                className="h-full w-full object-contain object-center"
+                loading="eager"
+                decoding="async"
+              />
             </div>
+
             <span className="truncate font-display text-[22px] font-black">
               {first}
               <span className="text-primary">{rest ? rest : ""}</span>
