@@ -24,6 +24,7 @@ const settingsSchema = codeSchema.extend({
   mascot_url: z.string().max(1_000_000).nullable().optional(),
   banner_url: z.string().max(1_000_000).nullable().optional(),
   accent_color: z.string().trim().max(40),
+  maintenance_mode: z.boolean().optional(),
 });
 
 export const verifyAdminCode = createServerFn({ method: "POST" })
@@ -141,6 +142,19 @@ export const saveSettings = createServerFn({ method: "POST" })
         banner_url: sanitizeImage(rest.banner_url ?? null),
         updated_at: new Date().toISOString(),
       })
+      .eq("id", "main");
+    if (error) throw new Error(error.message);
+    return { ok: true as const };
+  });
+
+export const setMaintenanceMode = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => codeSchema.extend({ enabled: z.boolean() }).parse(d))
+  .handler(async ({ data }) => {
+    const { assertAdmin, admin } = await import("./site.server");
+    assertAdmin(data.code);
+    const { error } = await admin()
+      .from("site_settings")
+      .update({ maintenance_mode: data.enabled, updated_at: new Date().toISOString() })
       .eq("id", "main");
     if (error) throw new Error(error.message);
     return { ok: true as const };
