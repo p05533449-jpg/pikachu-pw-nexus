@@ -61,6 +61,7 @@ export type Database = {
           home_subtitle: string
           home_title: string
           id: string
+          maintenance_mode: boolean
           mascot_url: string | null
           updated_at: string
           welcome_button: string
@@ -74,6 +75,7 @@ export type Database = {
           home_subtitle?: string
           home_title?: string
           id?: string
+          maintenance_mode?: boolean
           mascot_url?: string | null
           updated_at?: string
           welcome_button?: string
@@ -87,6 +89,7 @@ export type Database = {
           home_subtitle?: string
           home_title?: string
           id?: string
+          maintenance_mode?: boolean
           mascot_url?: string | null
           updated_at?: string
           welcome_button?: string

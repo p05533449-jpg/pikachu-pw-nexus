@@ -7,6 +7,8 @@ import { Mascot } from "@/components/Mascot";
 import { PlatformLogo } from "@/components/PlatformLogo";
 import { WelcomeScreen } from "@/components/WelcomeScreen";
 import { MaintenanceDialog } from "@/components/MaintenanceDialog";
+import { SiteMaintenance } from "@/components/SiteMaintenance";
+import { useIsAdmin } from "@/hooks/useAdminSession";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -39,6 +41,7 @@ function HomePage() {
   const [showWelcome, setShowWelcome] = useState(false);
   const [welcomeChecked, setWelcomeChecked] = useState(false);
   const [maintenanceOf, setMaintenanceOf] = useState<Platform | null>(null);
+  const isAdmin = useIsAdmin();
 
   useEffect(() => {
     if (sessionStorage.getItem("nexus-welcomed") !== "1") setShowWelcome(true);
@@ -81,6 +84,12 @@ function HomePage() {
   ).split(" ");
 
 
+
+  if (settings?.maintenance_mode && !isAdmin) {
+    return (
+      <SiteMaintenance brand={settings.brand_name ?? "PW Nexus"} mascotUrl={settings.mascot_url} />
+    );
+  }
 
   return (
     <>

@@ -24,6 +24,7 @@ export type SiteSettings = {
   mascot_url: string | null;
   banner_url: string | null;
   accent_color: string;
+  maintenance_mode: boolean;
   updated_at?: string;
 };
 

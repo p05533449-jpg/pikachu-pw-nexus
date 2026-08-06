@@ -4,6 +4,8 @@ import { useSiteContent, type Platform } from "@/hooks/useSiteContent";
 import { MenuButton } from "@/components/MenuButton";
 import { SideNav } from "@/components/SideNav";
 import { MaintenanceDialog } from "@/components/MaintenanceDialog";
+import { SiteMaintenance } from "@/components/SiteMaintenance";
+import { useIsAdmin } from "@/hooks/useAdminSession";
 
 export const Route = createFileRoute("/view/$id")({
   head: () => ({
@@ -30,6 +32,7 @@ function ViewerPage() {
   const { visiblePlatforms, settings, isLoading } = useSiteContent();
   const [menuOpen, setMenuOpen] = useState(false);
   const [maintenanceOf, setMaintenanceOf] = useState<Platform | null>(null);
+  const isAdmin = useIsAdmin();
   const platform = visiblePlatforms.find((p) => p.id === id);
   const blocked = platform?.maintenance ?? false;
 
@@ -48,6 +51,12 @@ function ViewerPage() {
     }
     window.location.assign(`/view/${p.id}`);
   };
+
+  if (settings?.maintenance_mode && !isAdmin) {
+    return (
+      <SiteMaintenance brand={settings.brand_name ?? "PW Nexus"} mascotUrl={settings.mascot_url} />
+    );
+  }
 
   return (
     <>
