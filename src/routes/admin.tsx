@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -11,6 +11,8 @@ import {
   Trash2,
   ArrowLeft,
   Wrench,
+  LogOut,
+  Power,
   Upload,
   Monitor,
   ExternalLink,
@@ -19,6 +21,7 @@ import {
 import { useSiteContent, type Platform } from "@/hooks/useSiteContent";
 import { PlatformLogo } from "@/components/PlatformLogo";
 import { fileToCompressedDataUrl } from "@/lib/image";
+import { clearAdminCode, readAdminCode, saveAdminCode } from "@/hooks/useAdminSession";
 import {
   deletePlatform,
   reorderPlatforms,
@@ -26,6 +29,7 @@ import {
   saveSettings,
   togglePlatform,
   verifyAdminCode,
+  setMaintenanceMode,
 } from "@/lib/site.functions";
 
 export const Route = createFileRoute("/admin")({
@@ -57,14 +61,14 @@ function AdminPage() {
   const verify = useServerFn(verifyAdminCode);
 
   useEffect(() => {
-    const saved = sessionStorage.getItem("nexus-admin");
+    const saved = readAdminCode();
     if (!saved) return;
     verify({ data: { code: saved } })
       .then(() => {
         setCode(saved);
         setUnlocked(true);
       })
-      .catch(() => sessionStorage.removeItem("nexus-admin"));
+      .catch(() => clearAdminCode());
   }, [verify]);
 
   const submit = async (e: React.FormEvent) => {
@@ -72,7 +76,7 @@ function AdminPage() {
     setChecking(true);
     try {
       await verify({ data: { code } });
-      sessionStorage.setItem("nexus-admin", code);
+      saveAdminCode(code);
       setUnlocked(true);
       toast.success("Welcome back");
     } catch (err) {
@@ -116,11 +120,18 @@ function AdminPage() {
 
 function AdminDashboard({ code }: { code: string }) {
   const { platforms, settings } = useSiteContent();
-  const [tab, setTab] = useState<"platforms" | "appearance">("platforms");
+  const [tab, setTab] = useState<"platforms" | "appearance" | "maintenance">("platforms");
+  const navigate = useNavigate();
+
+  const logout = () => {
+    clearAdminCode();
+    toast.success("Logged out");
+    void navigate({ to: "/" });
+  };
 
   return (
     <main className="mx-auto min-h-screen w-full max-w-2xl px-4 pb-20">
-      <header className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 py-5">
+      <header className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 py-5">
         <Link to="/" className="grid h-11 w-11 place-items-center rounded-2xl bg-surface-2">
           <ArrowLeft className="h-5 w-5" />
         </Link>
@@ -130,10 +141,17 @@ function AdminDashboard({ code }: { code: string }) {
             {platforms.length} platforms · {platforms.filter((p) => p.visible).length} live
           </p>
         </div>
+        <button
+          type="button"
+          onClick={logout}
+          className="flex items-center gap-2 rounded-2xl border border-border bg-surface-2 px-3 py-2.5 font-display text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <LogOut className="h-4 w-4" /> Logout
+        </button>
       </header>
 
       <div className="mb-5 flex gap-2">
-        {(["platforms", "appearance"] as const).map((t) => (
+        {(["platforms", "appearance", "maintenance"] as const).map((t) => (
           <button
             key={t}
             type="button"
@@ -147,11 +165,9 @@ function AdminDashboard({ code }: { code: string }) {
         ))}
       </div>
 
-      {tab === "platforms" ? (
-        <PlatformsTab code={code} platforms={platforms} />
-      ) : (
-        <AppearanceTab code={code} settings={settings} />
-      )}
+      {tab === "platforms" && <PlatformsTab code={code} platforms={platforms} />}
+      {tab === "appearance" && <AppearanceTab code={code} settings={settings} />}
+      {tab === "maintenance" && <MaintenanceTab code={code} settings={settings} />}
     </main>
   );
 }
@@ -547,5 +563,72 @@ function AppearanceTab({
         {saving ? "Saving…" : "Save changes"}
       </button>
     </form>
+  );
+}
+
+function MaintenanceTab({
+  code,
+  settings,
+}: {
+  code: string;
+  settings: ReturnType<typeof useSiteContent>["settings"];
+}) {
+  const toggle = useServerFn(setMaintenanceMode);
+  const [busy, setBusy] = useState(false);
+  const on = settings?.maintenance_mode ?? false;
+
+  const set = async (enabled: boolean) => {
+    setBusy(true);
+    try {
+      await toggle({ data: { code, enabled } });
+      toast.success(enabled ? "Maintenance mode is ON" : "Maintenance mode is OFF");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not update");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="glass-panel space-y-5 rounded-3xl p-5">
+      <div className="flex items-start gap-3">
+        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-primary/12 text-primary">
+          <Power className="h-5 w-5" />
+        </span>
+        <div className="min-w-0">
+          <h2 className="font-display text-lg font-bold">Site maintenance mode</h2>
+          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+            When ON, every normal visitor sees a full-screen maintenance page. You stay logged in as
+            admin and keep full access to the site and this panel.
+          </p>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between rounded-2xl border border-border bg-surface-2 px-4 py-3.5">
+        <div>
+          <p className="font-display text-sm font-bold">{on ? "ON" : "OFF"}</p>
+          <p className="text-xs text-muted-foreground">
+            {on ? "Visitors see the maintenance page" : "Site is live for everyone"}
+          </p>
+        </div>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={on}
+          aria-label="Maintenance mode"
+          disabled={busy}
+          onClick={() => void set(!on)}
+          className={`relative h-8 w-14 shrink-0 rounded-full transition-colors disabled:opacity-60 ${
+            on ? "bg-primary" : "bg-zinc-700"
+          }`}
+        >
+          <span
+            className={`absolute top-1 h-6 w-6 rounded-full bg-white transition-transform ${
+              on ? "translate-x-7" : "translate-x-1"
+            }`}
+          />
+        </button>
+      </div>
+    </div>
   );
 }
