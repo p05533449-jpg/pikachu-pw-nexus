@@ -1,8 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { Home, Wrench, X } from "lucide-react";
 import { PlatformLogo } from "./PlatformLogo";
-import { Mascot } from "./Mascot";
+import pikachu from "@/assets/pikachu.png";
 import type { Platform, SiteSettings } from "@/hooks/useSiteContent";
+
 
 type Props = {
   open: boolean;
