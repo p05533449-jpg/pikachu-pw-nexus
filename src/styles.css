@@ -232,3 +232,18 @@
     scroll-behavior: auto !important;
   }
 }
+
+@keyframes maintenance-slide {
+  0% { transform: translate3d(-110%, 0, 0); }
+  100% { transform: translate3d(320%, 0, 0); }
+}
+
+.maintenance-bar {
+  animation: maintenance-slide 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 0.3; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
