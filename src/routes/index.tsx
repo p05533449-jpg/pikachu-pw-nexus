@@ -7,6 +7,8 @@ import { Mascot } from "@/components/Mascot";
 import { PlatformLogo } from "@/components/PlatformLogo";
 import { WelcomeScreen } from "@/components/WelcomeScreen";
 import { MaintenanceDialog } from "@/components/MaintenanceDialog";
+import { SiteMaintenance } from "@/components/SiteMaintenance";
+import { useIsAdmin } from "@/hooks/useAdminSession";
 
 export const Route = createFileRoute("/")({
   head: () => ({

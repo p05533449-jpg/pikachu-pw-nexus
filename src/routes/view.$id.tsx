@@ -4,6 +4,8 @@ import { useSiteContent, type Platform } from "@/hooks/useSiteContent";
 import { MenuButton } from "@/components/MenuButton";
 import { SideNav } from "@/components/SideNav";
 import { MaintenanceDialog } from "@/components/MaintenanceDialog";
+import { SiteMaintenance } from "@/components/SiteMaintenance";
+import { useIsAdmin } from "@/hooks/useAdminSession";
 
 export const Route = createFileRoute("/view/$id")({
   head: () => ({
