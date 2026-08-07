@@ -128,6 +128,8 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useContentProtection();
+
 
   return (
     <QueryClientProvider client={queryClient}>
