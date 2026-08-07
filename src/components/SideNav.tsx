@@ -20,7 +20,7 @@ export function SideNav({ open, onClose, platforms, settings, onSelect }: Props)
   const rest = restWords.join(" ");
 
   const itemClass =
-    "flex w-full items-center gap-4 rounded-2xl px-3 py-3 text-left font-display text-[17px] font-bold text-zinc-400 transition-all duration-200 hover:bg-primary/10 hover:text-primary";
+    "flex w-full min-h-16 items-center gap-4 rounded-2xl px-3 py-3 text-left font-display text-[17px] font-bold text-zinc-400 transition-all duration-200 hover:bg-primary/10 hover:text-primary";
 
 
   return (
@@ -82,7 +82,9 @@ export function SideNav({ open, onClose, platforms, settings, onSelect }: Props)
             activeProps={{ className: "nav-active !text-primary" }}
             className={itemClass}
           >
-            <Home className="h-6 w-6 shrink-0 text-primary" />
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/10 bg-black">
+              <Home className="h-5 w-5 text-primary" />
+            </span>
             Home
           </Link>
 
